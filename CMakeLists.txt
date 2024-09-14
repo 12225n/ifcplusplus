@@ -1,8 +1,17 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 3.6)
 project(IfcPlusPlus)
 
+##设置整个方案级的输出目录，运用这个配置系统在生成可执行文件和dll时能够自动加Debug和Release子文件夹
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Build/$<CONFIG>/bin)
+
+##设置整个方案级的输出目录，将动态库\静态库输出路径定位到特定路径,供调试时使用(否则依赖的库分布在各个文件夹)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Build/$<CONFIG>/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Build/$<CONFIG>/lib)
+
 # Set a default build type if none was specified https://blog.kitware.com/cmake-and-the-default-build-type/
-set(default_build_type "Release")
+# set(default_build_type "Release")
+
+set(default_build_type "Debug")
  
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
@@ -75,4 +84,5 @@ IF(BUILD_CONSOLE_APPLICATION)
 ENDIF()
 IF(BUILD_VIEWER_APPLICATION)
   ADD_SUBDIRECTORY (examples/SimpleViewerExampleQt)
+  add_subdirectory(IFCPlugin)
 ENDIF()

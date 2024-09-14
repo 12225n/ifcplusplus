@@ -1,3 +1,8 @@
+Install/
+Install_Debug/
+Install_DebugAndRelease/
+Install_Release/
+.vs/
 *.aps
 *.cache
 *.db

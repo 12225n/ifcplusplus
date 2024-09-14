@@ -41,6 +41,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OU
 #include "viewer/ViewController.h"
 #include "viewer/Orbit3DManipulator.h"
 #include "viewer/ViewerUtil.h"
+#include "viewer/ViewController.h"
+
+#include <iostream>
 
 IfcPlusPlusSystem::IfcPlusPlusSystem()
 {

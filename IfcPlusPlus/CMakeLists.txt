@@ -110,6 +110,26 @@ install(
     DESTINATION include
     FILES_MATCHING PATTERN "*.h"
 )
+
+install(
+    DIRECTORY   src/external
+    DESTINATION include # /external # /include/Carve/src/include/carve
+)
+
+#[[
+install(
+    DIRECTORY   src/external/Carve/src/include/carve/
+    DESTINATION include/ifcpp/external/include/Carve/src/include/carve
+    FILES_MATCHING PATTERN "*.hpp"
+)
+
+install(
+    DIRECTORY   src/external/Carve/src/include/carve/
+    DESTINATION include/ifcpp/external/include/Carve/src/include/carve
+    FILES_MATCHING PATTERN "*.h"
+)
+]]
+
 install(
     TARGETS IfcPlusPlus
     EXPORT  IfcPlusPlus

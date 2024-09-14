@@ -24,6 +24,9 @@
 
 #pragma once
 
+#undef min
+#undef max
+
 namespace carve {
 namespace util {
 struct min_functor {

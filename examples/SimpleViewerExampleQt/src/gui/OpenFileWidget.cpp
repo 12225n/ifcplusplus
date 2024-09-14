@@ -369,7 +369,7 @@ void OpenFileWidget::loadIfcFile( QString& path_in )
 
 	int time_diff = (clock() - millisecs)/(double)CLOCKS_PER_SEC;
 	int num_entities = m_system->getIfcModel()->getMapIfcEntities().size();
-	txtOut( tr("File loaded: ") + QString::number(num_entities) + " entities in " + QString::number( round(time_diff*10)*0.1 ) + " sec."  );
+	txtOut( tr("File loaded: ") + QString::number(num_entities) + " entities in " + QString::number( round(time_diff * 10) * 0.1 ) + " sec."  );
 
 	m_system->notifyModelLoadingDone();
 	progressValue( 1.0, "" );

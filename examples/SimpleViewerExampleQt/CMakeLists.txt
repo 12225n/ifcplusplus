@@ -25,6 +25,8 @@ ENDIF()
 FIND_PACKAGE(Qt6Core REQUIRED)
 FIND_PACKAGE(Qt6Widgets REQUIRED)
 FIND_PACKAGE(Qt6OpenGL REQUIRED)
+find_package(Qt6OpenGLWidgets REQUIRED)
+# find_package(Qt6 COMPONENTS OpenGLWidgets REQUIRED)
 ADD_DEFINITIONS(-DUNICODE)
 ADD_DEFINITIONS(-D_UNICODE)
 ADD_DEFINITIONS(-DIFCQUERY_STATIC_LIB)
@@ -53,6 +55,8 @@ SET(IFCPPVIEWER_SOURCE_FILES
     src/viewer/IntersectionHandler.cpp
 	src/viewer/Orbit3DManipulator.cpp
     src/viewer/ViewerWidget.cpp
+    src/viewer/ViewController.cpp
+    src/viewer/ViewerUtil.cpp
 )
 
 SET(IFCPPVIEWER_MOC_FILES
@@ -63,12 +67,17 @@ SET(IFCPPVIEWER_MOC_FILES
     src/gui/OpenFileWidget.h
     src/gui/SettingsWidget.h
     src/viewer/ViewerWidget.h
+    src/viewer/Orbit3DManipulator.h
 )
+
+# set(G_TmpSourceFiles
+# )
 
 QT6_WRAP_CPP( IFCPPVIEWER_MOC_GENERATED_FILES ${IFCPPVIEWER_MOC_FILES})
 
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/IfcPlusPlus/Debug)
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/IfcPlusPlus/${CMAKE_BUILD_TYPE})
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 ADD_EXECUTABLE(SimpleViewerExampleQt 
     ${IFCPPVIEWER_MOC_GENERATED_FILES}
@@ -85,7 +94,9 @@ target_link_libraries(SimpleViewerExampleQt
         Qt6::Core
         Qt6::Gui
         Qt6::Widgets
-        Qt6::OpenGL)
+        Qt6::OpenGL
+        Qt6::OpenGLWidgets
+)
 		
 If(UNIX)
     # ON Debian Stretch with cmake 3.7.2 OPENTHREADS_LIBRARY_DEBUG is a not known variable
@@ -141,6 +152,7 @@ TARGET_INCLUDE_DIRECTORIES(SimpleViewerExampleQt
     ${OSGANIMATION_INCLUDE_DIR}
     ${OSGTEXT_INCLUDE_DIR}
 	${Qt6Core_INCLUDE_DIRS}
+    ${Qt6OpenGLWidgets_INCLUDE_DIRS}
 )
 
 INSTALL(

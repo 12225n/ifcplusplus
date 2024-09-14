@@ -11,6 +11,7 @@ ENDIF(NOT WIN32)
 
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/IfcPlusPlus/Debug)
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/IfcPlusPlus/${CMAKE_BUILD_TYPE})
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 ADD_EXECUTABLE(CreateIfcWallAndWriteFile 
     ${IFCPP_SOURCE_DIR}/examples/CreateIfcWallAndWriteFile/src/main.cpp
