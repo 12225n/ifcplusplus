@@ -312,6 +312,13 @@ void OpenFileWidget::loadIfcFile( QString& path_in )
 		step_reader->setMessageCallBack(std::bind(&OpenFileWidget::messageTarget, this, std::placeholders::_1));
 		step_reader->loadModelFromFile(path_str, geometry_converter->getBuildingModel());
 
+		std::shared_ptr<BuildingEntity> tmpBuildingEntity;
+
+		//tmpBuildingEntity->
+
+		//st
+		//std::unordered_map<int, std::shared_ptr<BuildingEntity>> tmpId2BuildingEntityMap = geometry
+
 		// convert IFC geometric representations into Carve geometry
 		geometry_converter->setCsgEps(1.5e-08);
 		geometry_converter->convertGeometry();

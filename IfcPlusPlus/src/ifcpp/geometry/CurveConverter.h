@@ -68,7 +68,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OU
 
 
 //\brief class to convert different types of IFC curve representations into carve input geometry
-class CurveConverter : public StatusCallback
+class IFCQUERY_EXPORT CurveConverter : public StatusCallback
 {
 protected:
 	shared_ptr<GeometrySettings>	m_geom_settings;

@@ -448,6 +448,7 @@ void ReaderSTEP::readSingleStepLine(const std::string& line, std::pair<std::stri
 	{
 		return;
 	}
+
 	char* begin_id = stream_pos;
 
 	// proceed until end of integer
@@ -576,6 +577,12 @@ void ReaderSTEP::readEntityArguments(std::vector<std::pair<std::string, shared_p
 			{
 				return;
 			}
+
+			if (entity->classID() == IFCDOOR)
+			{
+				std::cout << "IfcPlusPlus, ReaderStep::ReadEntityArguments, entity::m_classID == IfcDoor" << std::endl;
+			}
+
 			std::stringstream errorStream;
 			std::unordered_set<int> entityIdNotFound;
 			std::string& argument_str = entity_read_object.first;

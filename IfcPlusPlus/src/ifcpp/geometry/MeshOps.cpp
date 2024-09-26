@@ -893,6 +893,135 @@ void MeshOps::retriangulateMeshSetForExport( const shared_ptr<carve::mesh::MeshS
 //	checkAndFixMeshsetInverted(meshset, infoTriangulated, params);
 }
 
+void MeshOps::retriangulateMeshSetForExport(shared_ptr<carve::mesh::MeshSet<3> >& meshset, const GeomProcessingParams& paramsInput)
+{
+	if (!meshset)
+	{
+		return;
+	}
+
+	MeshSetInfo infoInput;
+	bool validInput = MeshOps::checkMeshSetValidAndClosed(meshset, infoInput, paramsInput);
+	MeshOps::checkMeshSetNonNegativeAndClosed(meshset, paramsInput);
+
+	if (infoInput.meshSetValid && infoInput.maxNumberOfEdgesPerFace == 3)
+	{
+		return;
+	}
+
+	if (infoInput.maxNumberOfEdgesPerFace == 3)
+	{
+		// TODO: check if this is sufficient
+		return;
+	}
+
+	GeomProcessingParams params(paramsInput);
+	params.checkZeroAreaFaces = false;
+	params.allowDegenerateEdges = true;
+	params.allowFinEdges = true;
+	params.mergeAlignedEdges = true;
+	PolyInputCache3D poly_cache(params.epsMergePoints);
+
+	for (size_t ii = 0; ii < meshset->meshes.size(); ++ii)
+	{
+		const carve::mesh::Mesh<3>* mesh = meshset->meshes[ii];
+		const std::vector<carve::mesh::Face<3>* >& vec_faces = mesh->faces;
+
+		for (size_t i2 = 0; i2 < vec_faces.size(); ++i2)
+		{
+			const carve::mesh::Face<3>* face = vec_faces[i2];
+
+			std::vector<vec3> faceBound;
+			getFacePoints(face, faceBound);
+
+			if (faceBound.size() < 3)
+			{
+				// ignore face
+				continue;
+			}
+
+			if (faceBound.size() == 3)
+			{
+				int vertex_index_a = poly_cache.addPoint(faceBound[0]);
+				int vertex_index_b = poly_cache.addPoint(faceBound[1]);
+				int vertex_index_c = poly_cache.addPoint(faceBound[2]);
+
+				if (vertex_index_a == vertex_index_b || vertex_index_a == vertex_index_c || vertex_index_b == vertex_index_c)
+				{
+					continue;
+				}
+
+				poly_cache.m_poly_data->addFace(vertex_index_a, vertex_index_b, vertex_index_c);
+				continue;
+			}
+			else if (faceBound.size() == 4)
+			{
+				vec3& pointA = faceBound[0];
+				vec3& pointB = faceBound[1];
+				vec3& pointC = faceBound[2];
+				vec3& pointD = faceBound[3];
+				//poly_cache.addFaceCheckIndexes(pointA, pointB, pointC, pointD, poly_cache, params.epsMergePoints);
+
+				poly_cache.addFaceCheckIndexes(pointA, pointB, pointC, pointD, params.epsMergePoints);
+
+				continue;
+			}
+
+			std::vector<std::vector<vec3> > inputBounds3D = { faceBound };
+			FaceConverter::createTriangulated3DFace(inputBounds3D, poly_cache, params, false);
+		}
+	}
+
+	bool checkPolyData = false; // probably not necessary for openGL or other renderers
+	if (checkPolyData)
+	{
+		std::string details = "";
+		bool correct = checkPolyhedronData(poly_cache.m_poly_data, params, details);
+		if (!correct)
+		{
+			fixPolyhedronData(poly_cache.m_poly_data, params);
+			correct = checkPolyhedronData(poly_cache.m_poly_data, params, details);
+
+#ifdef _DEBUG
+			if (!correct)
+			{
+				std::cout << "fixPolyhedronData  failed" << std::endl;
+			}
+#endif
+		}
+	}
+
+	shared_ptr<carve::mesh::MeshSet<3>> meshsetTriangulated = shared_ptr<carve::mesh::MeshSet<3> >(poly_cache.m_poly_data->createMesh(carve::input::opts(), params.epsMergePoints));
+	MeshSetInfo infoTriangulated;
+	MeshOps::checkMeshSetValidAndClosed(meshsetTriangulated, infoTriangulated, params);
+
+	if (isBetterForExport(infoTriangulated, infoInput))
+	{
+		meshset.reset();
+		meshset = meshsetTriangulated;
+	}
+
+#ifdef _DEBUG
+	bool dumpMesh = true;
+	if (validInput && dumpMesh && meshset->vertex_storage.size() > 60)
+	{
+		GeomDebugDump::DumpSettingsStruct dumpSet;
+		dumpSet.triangulateBeforeDump = false;
+		GeomProcessingParams paramCopy(params);
+		paramCopy.checkZeroAreaFaces = false;
+
+		GeomDebugDump::dumpLocalCoordinateSystem();
+		GeomDebugDump::moveOffset(0.3);
+		GeomDebugDump::dumpWithLabel("triangulate:input ", meshset, dumpSet, paramCopy, true, true);
+		GeomDebugDump::moveOffset(0.3);
+		GeomDebugDump::dumpWithLabel("triangulate:result", meshsetTriangulated, dumpSet, paramCopy, true, true);
+	}
+#endif
+
+	checkAndFixMeshsetInverted(meshset, infoTriangulated, params);
+}
+
+
 void MeshOps::simplifyMeshSet(shared_ptr<carve::mesh::MeshSet<3> >& meshset, MeshSetInfo& infoMeshOut, const GeomProcessingParams& params)
 {
 	if (!meshset)

@@ -1,6 +1,6 @@
 project(GLDIfc2OsgNodePlugin)
 
-ADD_DEFINITIONS(-DIFCQUERY_STATIC_LIB)
+ADD_DEFINITIONS(-DIFCQUERY_STATIC_LIB -DGLDIfc2OsgNodePlugin_Exports)
 
 set(CMAKE_DEBUG_POSTFIX _d)
 
@@ -19,7 +19,6 @@ include_directories(${CMAKE_SOURCE_DIR}/OpenCIM/LibCIMKernel/Include)
 include_directories(${G_TmpOpenCim2Dir}/OpenCIM/LibCIMKernel/Include)
 include_directories(${OSG_INCLUDE_DIR})
 
-#[[
 include_directories(${G_TmpIfcPlusPlusInstallPath}/include/)
 # include_directories(${G_TmpIfcPlusPlusInstallPath}/include/ifcpp/)
 # include_directories(${G_TmpIfcPlusPlusInstallPath}/include/ifcpp/IFC4X3)
@@ -29,8 +28,8 @@ include_directories(${G_TmpIfcPlusPlusInstallPath}/include/ifcpp/IFC4X3/include)
 include_directories(${G_TmpIfcPlusPlusInstallPath}/include/external/Carve/src/include)
 include_directories(${G_TmpIfcPlusPlusInstallPath}/include/external/glm)
 include_directories(${G_TmpIfcPlusPlusInstallPath}/include/external)
-]]
 
+#[[
 include_directories(
 	${IFCPP_SOURCE_DIR}/IfcPlusPlus/src
 	${IFCPP_SOURCE_DIR}/IfcPlusPlus/src/ifcpp/IFC4X3/include
@@ -43,13 +42,15 @@ include_directories(
 	${IFCPP_SOURCE_DIR}/IfcPlusPlus/src/external/Carve/build/src
 	${IFCPP_SOURCE_DIR}/IfcPlusPlus/src/external/glm
 )
+]]
 
 include_directories(${G_TmpQtHomePath}/include)
 
-# link_directories(${G_TmpIfcPlusPlusInstallPath}/bin)
+link_directories(${G_TmpIfcPlusPlusInstallPath}/bin)
+link_directories(${G_TmpOpenCim2Dir}/Install/lib)
 
-LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/Debug)
-LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/Release/lib)
+# LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/Debug/lib)
+# LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/Release/lib)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
@@ -59,4 +60,6 @@ set(G_TmpIfcPlusPlusLib
 			debug IfcPlusPlusd.lib
 			optimized IfcPlusPlus.lib)
 
-target_link_libraries(GLDIfc2OsgNodePlugin ${OPENSCENEGRAPH_LIBRARIES} ${G_TmpIfcPlusPlusLib} Qt6::Core)
+set(G_TmpLibCIMKernelLib debug LibCIMKernel_d.lib optimized LibCIMKernel.lib)
+
+target_link_libraries(GLDIfc2OsgNodePlugin ${OPENSCENEGRAPH_LIBRARIES} ${G_TmpIfcPlusPlusLib} ${G_TmpLibCIMKernelLib} Qt6::Core)

@@ -3,6 +3,8 @@ Install_Debug/
 Install_DebugAndRelease/
 Install_Release/
 .vs/
+
+*.zip
 *.aps
 *.cache
 *.db
